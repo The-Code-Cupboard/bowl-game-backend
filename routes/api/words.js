@@ -1,6 +1,15 @@
 const express = require("express");
-const uuid = require("uuid");
+const nanoid = require("nanoid");
 const router = express.Router();
+
+const { Pool } = require("pg");
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 let words = [
   {
@@ -17,13 +26,26 @@ let words = [
 
 const parseID = (id) => parseInt(id);
 // const parseID = (id) => id;
-const randomIntID = () => Math.floor(Math.random() * 1000) + 1;
+
+// Postgres get all words
+router.get("/", async (req, res) => {
+  try {
+    const client = await pool.connect();
+    const results = await client.query("SELECT * FROM words");
+    const results = { results: result ? result.rows : null };
+    res.json(results);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
 
 // Gets All Words
-router.get("/", (req, res) => {
-  console.log("GET (all words) received");
-  res.json(words);
-});
+// router.get("/", (req, res) => {
+//   console.log("GET (all words) received");
+//   res.json(words);
+// });
 
 // Get Single Word
 router.get("/:id", (req, res) => {
@@ -41,7 +63,7 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   console.log("POST received");
   const newWord = {
-    id: randomIntID(),
+    id: nanoid(),
     text: req.body.text,
     // userId: req.body.userId,
   };
