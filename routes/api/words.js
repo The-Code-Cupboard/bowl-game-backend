@@ -29,6 +29,7 @@ const parseID = (id) => parseInt(id);
 
 // Postgres get all words
 router.get("/", async (req, res) => {
+  console.log("GET (all words) received");
   try {
     const client = await pool.connect();
     const results = await client.query("SELECT * FROM words");
@@ -60,6 +61,25 @@ router.get("/:id", (req, res) => {
 });
 
 // Create word
+// router.post("/", (req, res) => {
+//   console.log("POST received");
+//   const newWord = {
+//     id: nanoid(),
+//     text: req.body.text,
+//     // userId: req.body.userId,
+//   };
+
+//   // if (!newWord.text || !newWord.userId) {
+//   if (!newWord.text) {
+//     return res.status(400).json({ msg: "Please include a word and userId." });
+//   }
+
+//   words.push(newWord);
+//   res.json({ msg: "Word successfully added." });
+//   // res.json(words);
+// });
+
+// Postgres create word
 router.post("/", (req, res) => {
   console.log("POST received");
   const newWord = {
@@ -67,15 +87,20 @@ router.post("/", (req, res) => {
     text: req.body.text,
     // userId: req.body.userId,
   };
-
-  // if (!newWord.text || !newWord.userId) {
   if (!newWord.text) {
     return res.status(400).json({ msg: "Please include a word and userId." });
   }
-
-  words.push(newWord);
-  res.json({ msg: "Word successfully added." });
-  // res.json(words);
+  try {
+    const client = await pool.connect();
+    const results = await client.query(`INSERT INTO Words VALUES ${newWord.id} ${newWord.text})`);
+    // const results = { results: result ? result.rows : null };
+    // res.json(results);
+    client.release();
+    res.json({ msg: "Word successfully added." });
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
 });
 
 // Delete word
