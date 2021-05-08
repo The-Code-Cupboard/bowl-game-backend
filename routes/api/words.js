@@ -31,8 +31,8 @@ const parseID = (id) => parseInt(id);
 router.get("/", async (req, res) => {
   console.log("GET (all words) received");
   try {
-    const client = await pool.connect();
-    const result = await client.query("SELECT * FROM words");
+    const client = pool.connect();
+    const result = await client.query("SELECT * FROM Words");
     const results = { 'results': (result) ? result.rows : null };
     res.json(results);
     client.release();
