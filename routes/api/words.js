@@ -1,7 +1,19 @@
 const express = require("express");
 const uuid = require("uuid");
 const router = express.Router();
-const words = require("../../Words");
+
+let words = [
+  {
+    id: 0,
+    text: "word0",
+    userId: "1",
+  },
+  {
+    id: 1,
+    text: "word1",
+    userId: "2",
+  },
+];
 
 const parseID = (id) => parseInt(id);
 // const parseID = (id) => id;
@@ -29,7 +41,6 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   console.log("POST received");
   const newWord = {
-    // id: uuid.v4(),
     id: randomIntID(),
     text: req.body.text,
     // userId: req.body.userId,
@@ -59,7 +70,7 @@ router.delete("/:id", (req, res) => {
     res.status(400).json({ msg: `No word with the id of ${req.params.id}` });
   }
 
-  words.filter((word) => word.id !== parseID(req.params.id));
+  words = words.filter((word) => word.id !== parseID(req.params.id));
 });
 
 module.exports = router;
