@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
   console.log("GET (all words) received");
   try {
     const client = await pool.connect();
-    const results = await client.query("SELECT * FROM words");
+    const result = await client.query("SELECT * FROM words");
     const results = { 'results': (result) ? result.rows : null };
     res.json(results);
     client.release();
