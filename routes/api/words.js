@@ -31,9 +31,9 @@ const parseID = (id) => parseInt(id);
 router.get("/", async (req, res) => {
   console.log("GET (all words) received");
   try {
-    const client = pool.connect();
+    const client = await pool.connect();
     const result = await client.query("SELECT * FROM Words");
-    const results = { 'results': (result) ? result.rows : null };
+    const results = { results: result ? result.rows : null };
     res.json(results);
     client.release();
   } catch (err) {
@@ -80,7 +80,7 @@ router.get("/:id", (req, res) => {
 // });
 
 // Postgres create word
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   console.log("POST received");
   const newWord = {
     id: nanoid(),
@@ -92,7 +92,9 @@ router.post("/", (req, res) => {
   }
   try {
     const client = await pool.connect();
-    const results = await client.query(`INSERT INTO Words VALUES ${newWord.id} ${newWord.text})`);
+    const results = await client.query(
+      `INSERT INTO Words VALUES ${newWord.id} ${newWord.text})`
+    );
     // const results = { results: result ? result.rows : null };
     // res.json(results);
     client.release();
