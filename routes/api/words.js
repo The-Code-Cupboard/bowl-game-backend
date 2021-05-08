@@ -1,5 +1,5 @@
 const express = require("express");
-const nanoid = require("nanoid");
+const { nanoid } = require("nanoid");
 const router = express.Router();
 
 const { Pool } = require("pg");
