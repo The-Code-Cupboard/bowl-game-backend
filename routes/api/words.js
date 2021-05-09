@@ -27,6 +27,16 @@ let words = [
 const parseID = (id) => parseInt(id);
 // const parseID = (id) => id;
 
+const buildFromList = (myList) => {
+  outputList = [];
+  for (i = 0; i < myList.length; i++) {
+    outputList.append({
+      id: "placeholder",
+      text: myList[i],
+    });
+  }
+};
+
 // Postgres get all words
 router.get("/", async (req, res) => {
   console.log("GET (all words) received");
@@ -35,7 +45,7 @@ router.get("/", async (req, res) => {
     const result = await client.query("SELECT * FROM Words;");
     // const results = { results: result ? result.rows : null };
     // res.json(results);
-    res.json(result ? result.rows : null);
+    res.json(result ? buildFromList(result.rows) : null);
     client.release();
   } catch (err) {
     console.error(err);
