@@ -141,9 +141,9 @@ router.delete("/:id", async (req, res) => {
   console.log(`DELETE received for word with id of ${req.params.id}`);
   try {
     const client = await pool.connect();
-    const result = await client.query(
-      `DELETE FROM Words WHERE WordID='${req.params.id}';`
-    );
+    client.query(`DELETE FROM Words WHERE WordID='${req.params.id}';`);
+    const result = await client.query("SELECT * FROM Words;");
+    res.json(result ? buildFromList(result.rows) : null);
     client.release();
   } catch (err) {
     console.error(err);
