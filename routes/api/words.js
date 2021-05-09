@@ -30,7 +30,7 @@ const parseID = (id) => parseInt(id);
 const buildFromList = (myList) => {
   outputList = [];
   for (i = 0; i < myList.length; i++) {
-    outputList.append({
+    outputList.push({
       id: "placeholder",
       text: myList[i],
     });
