@@ -32,7 +32,7 @@ router.get("/", async (req, res) => {
   console.log("GET (all words) received");
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM words;");
+    const result = await client.query("SELECT * FROM Words;");
     const results = { results: result ? result.rows : null };
     res.json(results);
     client.release();
@@ -93,7 +93,7 @@ router.post("/", async (req, res) => {
   try {
     const client = await pool.connect();
     const results = await client.query(
-      `INSERT INTO words VALUES (${newWord.id} ${newWord.text});`
+      `INSERT INTO Words VALUES (${newWord.id} ${newWord.text});`
     );
     // const results = { results: result ? result.rows : null };
     // res.json(results);
