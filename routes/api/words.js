@@ -11,22 +11,6 @@ const pool = new Pool({
   },
 });
 
-let words = [
-  {
-    id: 0,
-    text: "word0",
-    userId: "1",
-  },
-  {
-    id: 1,
-    text: "word1",
-    userId: "2",
-  },
-];
-
-const parseID = (id) => parseInt(id);
-// const parseID = (id) => id;
-
 const buildFromList = (myList) => {
   outputList = [];
   for (i = 0; i < myList.length; i++) {
@@ -45,8 +29,6 @@ router.get("/", async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query("SELECT * FROM Words;");
-    // const results = { results: result ? result.rows : null };
-    // res.json(results);
     res.json(result ? buildFromList(result.rows) : null);
     client.release();
   } catch (err) {
@@ -55,42 +37,21 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Gets All Words
-// router.get("/", (req, res) => {
-//   console.log("GET (all words) received");
-//   res.json(words);
-// });
-
-// Get Single Word
-router.get("/:id", (req, res) => {
+// Postgres get single word
+router.get("/", async (req, res) => {
   console.log("GET received");
-  const found = words.some((word) => word.id === parseID(req.params.id));
-
-  if (found) {
-    res.json(words.filter((word) => word.id === parseID(req.params.id)));
-  } else {
-    res.status(400).json({ msg: `No word with the id of ${req.params.id}` });
+  try {
+    const client = await pool.connect();
+    const result = await client.query(
+      `SELECT * FROM Words WHERE WordID='${req.params.id}';`
+    );
+    res.json(result ? { id: result.wordid, text: result.wordtext } : null);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
   }
 });
-
-// Create word
-// router.post("/", (req, res) => {
-//   console.log("POST received");
-//   const newWord = {
-//     id: nanoid(),
-//     text: req.body.text,
-//     // userId: req.body.userId,
-//   };
-
-//   // if (!newWord.text || !newWord.userId) {
-//   if (!newWord.text) {
-//     return res.status(400).json({ msg: "Please include a word and userId." });
-//   }
-
-//   words.push(newWord);
-//   res.json({ msg: "Word successfully added." });
-//   // res.json(words);
-// });
 
 // Postgres create word
 router.post("/", async (req, res) => {
@@ -107,7 +68,6 @@ router.post("/", async (req, res) => {
     const client = await pool.connect();
     console.log(`Before SQL query for to insert ${newWord}`);
     const results = await client.query(
-      // "INSERT INTO words (WordID, WordText) VALUES ('node-js-id', 'node-js-text');"
       `INSERT INTO Words (WordID, WordText) VALUES ('${newWord.id}', '${newWord.text}');`
     );
     console.log(`After SQL query for to insert ${newWord}`);
@@ -118,23 +78,6 @@ router.post("/", async (req, res) => {
     res.send("Error " + err);
   }
 });
-
-// Delete word
-// router.delete("/:id", (req, res) => {
-//   console.log(`DELETE received for word with id of ${req.params.id}`);
-//   const found = words.some((word) => word.id === parseID(req.params.id));
-
-//   if (found) {
-//     res.json({
-//       msg: "word deleted",
-//       words: words.filter((word) => word.id !== parseID(req.params.id)),
-//     });
-//   } else {
-//     res.status(400).json({ msg: `No word with the id of ${req.params.id}` });
-//   }
-
-//   words = words.filter((word) => word.id !== parseID(req.params.id));
-// });
 
 // Postgres delete word
 router.delete("/:id", async (req, res) => {
