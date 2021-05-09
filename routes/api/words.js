@@ -104,11 +104,11 @@ router.post("/", async (req, res) => {
   }
   try {
     const client = await pool.connect();
+    console.log(`Before SQL query for to insert ${newWord}`);
     const results = await client.query(
       `INSERT INTO Words VALUES (${newWord.id} ${newWord.text});`
     );
-    // const results = { results: result ? result.rows : null };
-    // res.json(results);
+    console.log(`After SQL query for to insert ${newWord}`);
     client.release();
     res.json({ msg: "Word successfully added." });
   } catch (err) {
