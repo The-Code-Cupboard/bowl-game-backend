@@ -19,7 +19,6 @@ const buildFromList = (myList) => {
       text: myList[i].wordtext,
     });
   }
-  console.log(outputList);
   return outputList;
 };
 
@@ -38,20 +37,21 @@ router.get("/", async (req, res) => {
 });
 
 // Postgres get single word
-router.get("/:id", async (req, res) => {
-  console.log("GET received");
-  try {
-    const client = await pool.connect();
-    const result = await client.query(
-      `SELECT * FROM Words WHERE WordID='${req.params.id}';`
-    );
-    res.json({ id: result.wordid, text: result.wordtext });
-    client.release();
-  } catch (err) {
-    console.error(err);
-    res.send("Error " + err);
-  }
-});
+// TODO : response seems to always be returning {} -- fix this when this route is needed
+// router.get("/:id", async (req, res) => {
+//   console.log("GET received");
+//   try {
+//     const client = await pool.connect();
+//     const result = await client.query(
+//       `SELECT * FROM Words WHERE WordID='${req.params.id}';`
+//     );
+//     res.json({ id: result.wordid, text: result.wordtext });
+//     client.release();
+//   } catch (err) {
+//     console.error(err);
+//     res.send("Error " + err);
+//   }
+// });
 
 // Postgres create word
 router.post("/", async (req, res) => {
