@@ -38,7 +38,7 @@ router.get("/", async (req, res) => {
 });
 
 // Postgres get single word
-router.get("/", async (req, res) => {
+router.get("/:id", async (req, res) => {
   console.log("GET received");
   try {
     const client = await pool.connect();
