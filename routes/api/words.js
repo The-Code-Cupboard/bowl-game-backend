@@ -35,6 +35,7 @@ const buildFromList = (myList) => {
       text: myList[i],
     });
   }
+  return outputList;
 };
 
 // Postgres get all words
