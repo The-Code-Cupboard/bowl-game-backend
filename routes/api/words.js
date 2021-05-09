@@ -137,7 +137,7 @@ router.post("/", async (req, res) => {
 // });
 
 // Postgres delete word
-router.delete("/", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   console.log(`DELETE received for word with id of ${req.params.id}`);
   try {
     const client = await pool.connect();
