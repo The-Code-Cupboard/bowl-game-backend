@@ -45,7 +45,7 @@ router.get("/:id", async (req, res) => {
     const result = await client.query(
       `SELECT * FROM Words WHERE WordID='${req.params.id}';`
     );
-    res.json(result ? { id: result.wordid, text: result.wordtext } : null);
+    res.json({ id: result.wordid, text: result.wordtext });
     client.release();
   } catch (err) {
     console.error(err);
