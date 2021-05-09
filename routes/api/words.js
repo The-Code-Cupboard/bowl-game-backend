@@ -35,6 +35,7 @@ const buildFromList = (myList) => {
       text: myList[i],
     });
   }
+  console.log(outputList);
   return outputList;
 };
 
