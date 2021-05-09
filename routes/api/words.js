@@ -120,20 +120,35 @@ router.post("/", async (req, res) => {
 });
 
 // Delete word
-router.delete("/:id", (req, res) => {
+// router.delete("/:id", (req, res) => {
+//   console.log(`DELETE received for word with id of ${req.params.id}`);
+//   const found = words.some((word) => word.id === parseID(req.params.id));
+
+//   if (found) {
+//     res.json({
+//       msg: "word deleted",
+//       words: words.filter((word) => word.id !== parseID(req.params.id)),
+//     });
+//   } else {
+//     res.status(400).json({ msg: `No word with the id of ${req.params.id}` });
+//   }
+
+//   words = words.filter((word) => word.id !== parseID(req.params.id));
+// });
+
+// Postgres delete word
+router.get("/", async (req, res) => {
   console.log(`DELETE received for word with id of ${req.params.id}`);
-  const found = words.some((word) => word.id === parseID(req.params.id));
-
-  if (found) {
-    res.json({
-      msg: "word deleted",
-      words: words.filter((word) => word.id !== parseID(req.params.id)),
-    });
-  } else {
-    res.status(400).json({ msg: `No word with the id of ${req.params.id}` });
+  try {
+    const client = await pool.connect();
+    const result = await client.query(
+      `DELETE FROM Words WHERE WordID='${req.params.id}';`
+    );
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
   }
-
-  words = words.filter((word) => word.id !== parseID(req.params.id));
 });
 
 module.exports = router;
