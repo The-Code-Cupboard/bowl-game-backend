@@ -31,8 +31,8 @@ const buildFromList = (myList) => {
   outputList = [];
   for (i = 0; i < myList.length; i++) {
     outputList.push({
-      id: "placeholder",
-      text: myList[i],
+      id: myList[i].wordid,
+      text: myList[i].wordtext,
     });
   }
   console.log(outputList);
