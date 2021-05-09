@@ -33,8 +33,9 @@ router.get("/", async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query("SELECT * FROM Words;");
-    const results = { results: result ? result.rows : null };
-    res.json(results);
+    // const results = { results: result ? result.rows : null };
+    // res.json(results);
+    res.json(result ? result.rows : null);
     client.release();
   } catch (err) {
     console.error(err);
