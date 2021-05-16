@@ -15,8 +15,9 @@ const buildFromList = (myList) => {
   outputList = [];
   for (i = 0; i < myList.length; i++) {
     outputList.push({
-      id: myList[i].wordid,
-      text: myList[i].wordtext,
+      id: myList[i].id,
+      text: myList[i].text,
+      userid: myList[i].userid,
     });
   }
   return outputList;
@@ -24,10 +25,10 @@ const buildFromList = (myList) => {
 
 // Postgres get all words
 router.get("/", async (req, res) => {
-  console.log("GET (all words) received");
+  console.log("/api/words/ : GET (all words) received");
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM Words;");
+    const result = await client.query("SELECT * FROM words;");
     res.json(result ? buildFromList(result.rows) : null);
     client.release();
   } catch (err) {
@@ -55,11 +56,11 @@ router.get("/", async (req, res) => {
 
 // Postgres create word
 router.post("/", async (req, res) => {
-  console.log("POST received");
+  console.log("/api/words/ : POST received");
   const newWord = {
     id: nanoid(),
     text: req.body.text,
-    // userId: req.body.userId,
+    userid: req.body.userid,
   };
   if (!newWord.text) {
     return res.status(400).json({ msg: "Please include a word and userId." });
@@ -68,7 +69,7 @@ router.post("/", async (req, res) => {
     const client = await pool.connect();
     console.log(`Before SQL query for to insert ${newWord}`);
     const results = await client.query(
-      `INSERT INTO Words (WordID, WordText) VALUES ('${newWord.id}', '${newWord.text}');`
+      `INSERT INTO words (id, text, userid) VALUES ('${newWord.id}', '${newWord.text}', '${newWord.userid});`
     );
     console.log(`After SQL query for to insert ${newWord}`);
     client.release();
@@ -81,11 +82,13 @@ router.post("/", async (req, res) => {
 
 // Postgres delete word
 router.delete("/:id", async (req, res) => {
-  console.log(`DELETE received for word with id of ${req.params.id}`);
+  console.log(
+    `/api/words/ : DELETE received for word with id of ${req.params.id}`
+  );
   try {
     const client = await pool.connect();
-    client.query(`DELETE FROM Words WHERE WordID='${req.params.id}';`);
-    const result = await client.query("SELECT * FROM Words;");
+    client.query(`DELETE FROM words WHERE id='${req.params.id}';`);
+    const result = await client.query("SELECT * FROM words;");
     res.json(result ? buildFromList(result.rows) : null);
     client.release();
   } catch (err) {
