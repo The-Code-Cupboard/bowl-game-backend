@@ -64,7 +64,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Postgres delete word
+// Postgres delete user and associated words
 router.delete("/:id", async (req, res) => {
   console.log(
     `/api/users/ : DELETE received for user with id of ${req.params.id}`

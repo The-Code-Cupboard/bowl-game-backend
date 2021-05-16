@@ -17,7 +17,7 @@ const buildFromList = (myList) => {
     outputList.push({
       id: myList[i].id,
       text: myList[i].text,
-      userid: myList[i].userid,
+      userId: myList[i].userId,
     });
   }
   return outputList;
@@ -60,7 +60,7 @@ router.post("/", async (req, res) => {
   const newWord = {
     id: nanoid(),
     text: req.body.text,
-    userid: req.body.userid,
+    userId: req.body.userId,
   };
   if (!newWord.text) {
     return res.status(400).json({ msg: "Please include a word and userId." });
@@ -69,7 +69,7 @@ router.post("/", async (req, res) => {
     const client = await pool.connect();
     console.log(`Before SQL query for to insert ${newWord}`);
     const results = await client.query(
-      `INSERT INTO words (id, text, userid) VALUES ('${newWord.id}', '${newWord.text}', '${newWord.userid}');`
+      `INSERT INTO words (id, text, userid) VALUES ('${newWord.id}', '${newWord.text}', '${newWord.userId}');`
     );
     console.log(`After SQL query for to insert ${newWord}`);
     client.release();
