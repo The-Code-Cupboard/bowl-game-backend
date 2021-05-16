@@ -69,7 +69,7 @@ router.post("/", async (req, res) => {
     const client = await pool.connect();
     console.log(`Before SQL query for to insert ${newWord}`);
     const results = await client.query(
-      `INSERT INTO words (id, text, userid) VALUES ('${newWord.id}', '${newWord.text}', '${newWord.userid});`
+      `INSERT INTO words (id, text, userid) VALUES ('${newWord.id}', '${newWord.text}', '${newWord.userid}');`
     );
     console.log(`After SQL query for to insert ${newWord}`);
     client.release();
