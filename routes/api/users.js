@@ -49,9 +49,6 @@ router.post("/", async (req, res) => {
     id: req.body.id,
     username: req.body.username,
   };
-  if (!newUser.username) {
-    return res.status(400).json({ msg: "Please include a username." });
-  }
   try {
     const client = await pool.connect();
     console.log(`Before SQL query for to insert ${newUser}`);
