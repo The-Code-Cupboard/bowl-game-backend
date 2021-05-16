@@ -16,8 +16,25 @@ router.get("/", async (req, res) => {
   console.log("/api/users: GET received");
   try {
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM Users;");
+    const result = await client.query("SELECT * FROM users;");
     res.json(result ? result.rows : null);
+    client.release();
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
+// Postgres get single user
+// TODO : response seems to always be returning {} -- fix this when this route is needed
+router.get("/:id", async (req, res) => {
+  console.log(`/api/users: GET received for user with id: ${req.params.id}`);
+  try {
+    const client = await pool.connect();
+    const result = await client.query(
+      `SELECT * FROM users WHERE id='${req.params.id}';`
+    );
+    res.json({ id: result.id, username: result.username });
     client.release();
   } catch (err) {
     console.error(err);
@@ -28,23 +45,40 @@ router.get("/", async (req, res) => {
 // Postgres create user
 router.post("/", async (req, res) => {
   console.log("/api/users: POST received");
-  const newWord = {
-    id: nanoid(),
-    text: req.body.text,
-    // userId: req.body.userId,
+  const newUser = {
+    id: req.body.id,
+    username: req.body.username,
   };
-  if (!newWord.text) {
+  if (!newUser.text) {
     return res.status(400).json({ msg: "Please include a word and userId." });
   }
   try {
     const client = await pool.connect();
-    console.log(`Before SQL query for to insert ${newWord}`);
+    console.log(`Before SQL query for to insert ${newUser}`);
     const results = await client.query(
-      `INSERT INTO Users (ID, UserName) VALUES ('${newWord.id}', '${newWord.text}');`
+      `INSERT INTO users (id, username) VALUES ('${newUser.id}', '${newUser.username}');`
     );
-    console.log(`After SQL query for to insert ${newWord}`);
+    console.log(`After SQL query for to insert ${newUser}`);
     client.release();
     res.json({ msg: "Word successfully added." });
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
+// Postgres delete word
+router.delete("/:id", async (req, res) => {
+  console.log(
+    `/api/users/ : DELETE received for user with id of ${req.params.id}`
+  );
+  try {
+    const client = await pool.connect();
+    client.query(`DELETE FROM users WHERE id='${req.params.id}';`);
+    client.query(`DELETE FROM words WHERE userid='${req.params.id}';`);
+    // const result = await client.query("SELECT * FROM users;");
+    // res.json(result ? buildFromList(result.rows) : null);
+    client.release();
   } catch (err) {
     console.error(err);
     res.send("Error " + err);
