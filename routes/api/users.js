@@ -49,8 +49,8 @@ router.post("/", async (req, res) => {
     id: req.body.id,
     username: req.body.username,
   };
-  if (!newUser.text) {
-    return res.status(400).json({ msg: "Please include a word and userId." });
+  if (!newUser.username) {
+    return res.status(400).json({ msg: "Please include a username." });
   }
   try {
     const client = await pool.connect();
