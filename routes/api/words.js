@@ -17,7 +17,7 @@ const buildFromList = (myList) => {
     outputList.push({
       id: myList[i].id,
       text: myList[i].text,
-      userId: myList[i].userId,
+      userId: myList[i].userid,
     });
   }
   return outputList;
