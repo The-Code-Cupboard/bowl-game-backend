@@ -34,7 +34,7 @@ router.get("/:id", async (req, res) => {
     const result = await client.query(
       `SELECT * FROM users WHERE id='${req.params.id}';`
     );
-    res.json({ id: result.id, username: result.username });
+    res.json({ id: result[0].id, username: result[0].username });
     client.release();
   } catch (err) {
     console.error(err);
