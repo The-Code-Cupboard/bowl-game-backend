@@ -4,12 +4,18 @@ const router = express.Router();
 
 const { Pool } = require("pg");
 
+// for local dev
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  connectionString: "postgres://postgres:password@localhost:5432/bowlgamelocal",
 });
+
+// for production
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
 
 // Postgres get all users
 router.get("/", async (req, res) => {

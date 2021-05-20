@@ -4,12 +4,26 @@ const router = express.Router();
 
 const { Pool } = require("pg");
 
+// SQL commands required to initialize database
+// --------------------------------------------
+// CREATE DATABASE bowlgamelocal;
+// \c bowlgamelocal
+// CREATE TABLE words (id varchar(255), text varchar(255), userid varchar(255));
+// CREATE TABLE users (id varchar(255), username varchar(255));
+// --------------------------------------------
+
+// for local dev
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  connectionString: "postgres://postgres:password@localhost:5432/bowlgamelocal",
 });
+
+// for production
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
 
 const buildFromList = (myList) => {
   outputList = [];
