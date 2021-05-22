@@ -17,3 +17,6 @@ database username: postgres
 database password: password
 database URL: localhost
 database port: 5432
+
+
+To run unit testing - `jest`
