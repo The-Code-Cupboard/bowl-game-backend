@@ -53,6 +53,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Postgres create user
+// If userID already exists, update user
 router.post("/", async (req, res) => {
   console.log("/api/users/ : POST received");
   const newUser = {
@@ -60,6 +61,14 @@ router.post("/", async (req, res) => {
     username: req.body.username,
   };
   try {
+    // const client = await pool.connect();
+    // console.log(`Before SQL query for to insert ${newUser}`);
+    // await client.query(
+    //   `INSERT INTO users (id, username)
+    //   VALUES ('${newUser.id}', '${newUser.username}')
+    //   ON CONFLICT (id) DO UPDATE SET username = '${newUser.username}';`
+    // );
+    // console.log(`After SQL query for to insert ${newUser}`);
     const query = sqlq.insert_into_table(
       "users",
       ["id", "username"],
@@ -68,25 +77,7 @@ router.post("/", async (req, res) => {
     const client = await pool.connect();
     const results = await client.query(query);
     client.release();
-    res.json({ msg: "Word successfully added." });
-  } catch (err) {
-    console.error(err);
-    res.send("Error " + err);
-  }
-});
-
-// Postgres Update User
-router.put("/:id", (req, res) => {
-  console.log(
-    `/api/users/ : PUT received for user with id of ${req.params.id}`
-  );
-  const updMember = req.body;
-  try {
-    const client = await pool.connect();
-    client.query(
-      `UPDATE users SET username='${updMember.username}' WHERE id='${updMember.id}';`
-    );
-    res.json({ msg: "User updated", updMember });
+    res.json({ msg: "User successfully added." });
   } catch (err) {
     console.error(err);
     res.send("Error " + err);
