@@ -61,19 +61,12 @@ router.post("/", async (req, res) => {
     username: req.body.username,
   };
   try {
-    // const client = await pool.connect();
-    // console.log(`Before SQL query for to insert ${newUser}`);
-    // await client.query(
-    //   `INSERT INTO users (id, username)
-    //   VALUES ('${newUser.id}', '${newUser.username}')
-    //   ON CONFLICT (id) DO UPDATE SET username = '${newUser.username}';`
+    const query = sqlq.insert_user_into_table(newUser);
+    // const query = sqlq.insert_into_table(
+    //   "users",
+    //   ["id", "username"],
+    //   [newUser.id, newUser.username]
     // );
-    // console.log(`After SQL query for to insert ${newUser}`);
-    const query = sqlq.insert_into_table(
-      "users",
-      ["id", "username"],
-      [newUser.id, newUser.username]
-    );
     const client = await pool.connect();
     const results = await client.query(query);
     client.release();

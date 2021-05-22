@@ -25,3 +25,10 @@ exports.insert_into_table = (table, labels, values) => {
     "', '"
   )}');`;
 };
+
+//Insert user into table and check for ID conflict (specific use)
+exports.insert_user_into_table = (newUser) => {
+  return `INSERT INTO users (id, username)
+  VALUES ('${newUser.id}', '${newUser.username}')
+  ON CONFLICT (id) DO UPDATE SET username = '${newUser.username}';`;
+};
