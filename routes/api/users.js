@@ -70,6 +70,24 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Postgres Update User
+router.put("/:id", (req, res) => {
+  console.log(
+    `/api/users/ : PUT received for user with id of ${req.params.id}`
+  );
+  const updMember = req.body;
+  try {
+    const client = await pool.connect();
+    client.query(
+      `UPDATE users SET username='${updMember.username}' WHERE id='${updMember.id}';`
+    );
+    res.json({ msg: "User updated", updMember });
+  } catch (err) {
+    console.error(err);
+    res.send("Error " + err);
+  }
+});
+
 // Postgres delete user and associated words
 router.delete("/:id", async (req, res) => {
   console.log(
