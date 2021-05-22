@@ -71,7 +71,7 @@ router.post("/", async (req, res) => {
 });
 
 // Postgres Update User
-router.put("/:id", (req, res) => {
+router.put("/", async (req, res) => {
   console.log(
     `/api/users/ : PUT received for user with id of ${req.params.id}`
   );
