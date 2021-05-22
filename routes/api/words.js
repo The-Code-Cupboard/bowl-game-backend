@@ -1,16 +1,9 @@
 const express = require("express");
 const { nanoid } = require("nanoid");
 const router = express.Router();
-
 const { Pool } = require("pg");
 
-// SQL commands required to initialize database
-// --------------------------------------------
-// CREATE DATABASE bowlgamelocal
-// \c bowlgamelocal
-// CREATE TABLE words (id varchar(255) NOT NULL, text varchar(255) NOT NULL, userid varchar(255) NOT NULL);
-// CREATE TABLE users (id varchar(255) PRIMARY KEY, username varchar(255) UNIQUE);
-// --------------------------------------------
+const sqlq = require("../../sql_queries");
 
 // for local dev
 const pool = new Pool({
@@ -41,8 +34,9 @@ const buildFromList = (myList) => {
 router.get("/", async (req, res) => {
   console.log("/api/words/ : GET (all words) received");
   try {
+    const query = sqlq.select_all_from_table("words");
     const client = await pool.connect();
-    const result = await client.query("SELECT * FROM words;");
+    const result = await client.query(query);
     res.json(result ? buildFromList(result.rows) : null);
     client.release();
   } catch (err) {
@@ -50,23 +44,6 @@ router.get("/", async (req, res) => {
     res.send("Error " + err);
   }
 });
-
-// Postgres get single word
-// TODO : response seems to always be returning {} -- fix this when this route is needed
-// router.get("/:id", async (req, res) => {
-//   console.log("GET received");
-//   try {
-//     const client = await pool.connect();
-//     const result = await client.query(
-//       `SELECT * FROM Words WHERE WordID='${req.params.id}';`
-//     );
-//     res.json({ id: result.wordid, text: result.wordtext });
-//     client.release();
-//   } catch (err) {
-//     console.error(err);
-//     res.send("Error " + err);
-//   }
-// });
 
 // Postgres create word
 router.post("/", async (req, res) => {
@@ -76,16 +53,17 @@ router.post("/", async (req, res) => {
     text: req.body.text,
     userId: req.body.userId,
   };
-  if (!newWord.text) {
+  if (!newWord.text || !newWord.userId) {
     return res.status(400).json({ msg: "Please include a word and userId." });
   }
   try {
-    const client = await pool.connect();
-    console.log(`Before SQL query for to insert ${newWord}`);
-    const results = await client.query(
-      `INSERT INTO words (id, text, userid) VALUES ('${newWord.id}', '${newWord.text}', '${newWord.userId}');`
+    const query = sqlq.insert_into_table(
+      "words",
+      ["id", "text", "userid"],
+      [newWord.id, newWord.text, newWord.userId]
     );
-    console.log(`After SQL query for to insert ${newWord}`);
+    const client = await pool.connect();
+    await client.query(query);
     client.release();
     res.json({ msg: "Word successfully added." });
   } catch (err) {
@@ -100,10 +78,15 @@ router.delete("/:id", async (req, res) => {
     `/api/words/ : DELETE received for word with id of ${req.params.id}`
   );
   try {
+    // delete word from table
+    const query1 = sqlq.delete_from_table_filter("words", "id", req.params.id);
     const client = await pool.connect();
-    client.query(`DELETE FROM words WHERE id='${req.params.id}';`);
-    const result = await client.query("SELECT * FROM words;");
+    client.query(query1);
+    // return updated words to client (TODO: adjust front-end so this isn't necessey)
+    const query2 = sqlq.select_all_from_table("words");
+    const result = await client.query(query2);
     res.json(result ? buildFromList(result.rows) : null);
+
     client.release();
   } catch (err) {
     console.error(err);
