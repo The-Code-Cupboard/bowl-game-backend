@@ -6,17 +6,17 @@ const { Pool } = require("pg");
 const sqlq = require("../../sql_queries");
 
 // for local dev
-const pool = new Pool({
-  connectionString: "postgres://postgres:password@localhost:5432/bowlgamelocal",
-});
+// const pool = new Pool({
+//   connectionString: "postgres://postgres:password@localhost:5432/bowlgamelocal",
+// });
 
 // for production
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
-// });
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
 const buildFromList = (myList) => {
   outputList = [];
