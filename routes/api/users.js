@@ -55,7 +55,7 @@ router.get("/:id", async (req, res) => {
 // Postgres create user
 // If userID already exists, update user
 router.post("/", async (req, res) => {
-  console.log("/api/users/ : POST received");
+  console.log(`/api/users/ : POST received. id: ${req.body.id}, username: ${req.body.username}`);
   const newUser = {
     id: req.body.id,
     username: req.body.username,
